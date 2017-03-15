@@ -1,40 +1,40 @@
-###
+###########################################################
 # FICKLE: A statebus library for responsive variables
 # The MIT License (MIT)
 # Copyright (c) Travis Kriplean, Invisible College
-#  
 # 
+#
 # Define & recompute shared variables based upon viewport changes, such as a 
 # resize of a window. 
-# 
+
 # To use, add RESPONSIVE() to a component, such as dom.BODY.
-# 
+
 # If you want to have more than just window_width and window_height defined, 
 # define a function that calculates the custom responsive variables. 
 # This function takes a single argument, the upstream variables like window 
 # width and height that have already been calculated. For example: 
-# 
+
 # RESPONSIVE
 #   calc: (upstream_vars) -> 
 #     single_col: upstream_vars.window_width < 500
 #     gutter: if upstream_vars.window_width > 1000 then 80 else 10
-#
+
 # Any of your components can register their own RESPONSIVE variables using the 
 # same method. 
-# 
+
 # All variables are made available on fickle. E.g. fickle.window_width. 
 # Any component that has accessed a responsive variable on fickle will 
 # be re-rendered if the variable changes. For example: 
-# 
+
 # DIV 
 #   style: 
-#     width: if fickle.single_col then fickle.window_width else fickle.window_width / 2
+#     width: fickle.single_col
 #     padding: fickle.gutter
-# 
+
 # Beneath the surface, all variables are at fetch("fickle_vars"), and a getter 
 # is used to facilitate the direct variable access while subscribing callers 
 # to changes. 
-###
+
 
 dom.RESPONSIVE = -> 
   if !@initialized?
@@ -52,22 +52,23 @@ dom.RESPONSIVE.down = ->
     console.error 'Could not clean up FICKLE funk'
 
 be_responsive = -> 
-  vars = fetch('fickle_vars')
+  
 
-  base_vars = 
+  # the basic responsive variables
+  responsive_vars = 
     window_width: window.innerWidth
     window_height: window.innerHeight
     document_width: document.body.clientWidth
     document_height: document.body.clientHeight
 
   # Compute the custom variables that the programmer wants defined
-  responsive_vars = {}
   for funk in registered_funks
-    extend responsive_vars, funk(base_vars)
+    derived = funk(responsive_vars)
+    for k,v of derived 
+      responsive_vars[k] = v 
 
-  responsive_vars = extend responsive_vars, base_vars 
-
-  # only update if we have a change
+  # only update state if we have a change
+  vars = fetch('fickle_vars')
   changed = false
   for own k,v of responsive_vars
     if vars[k] != v
