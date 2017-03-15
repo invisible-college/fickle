@@ -18,7 +18,7 @@
 #   calc: (upstream_vars) -> 
 #     single_col: upstream_vars.window_width < 500
 #     gutter: if upstream_vars.window_width > 1000 then 80 else 10
-# 
+#
 # Any of your components can register their own RESPONSIVE variables using the 
 # same method. 
 # 
@@ -28,7 +28,7 @@
 # 
 # DIV 
 #   style: 
-#     width: fickle.single_col
+#     width: if fickle.single_col then fickle.window_width else fickle.window_width / 2
 #     padding: fickle.gutter
 # 
 # Beneath the surface, all variables are at fetch("fickle_vars"), and a getter 
