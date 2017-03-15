@@ -1,0 +1,3 @@
+Copyright (c) Travis Kriplean, Consider.it LLC
+
+The MIT License (MIT)
