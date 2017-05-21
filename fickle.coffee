@@ -1,25 +1,24 @@
 ###########################################################
 # FICKLE: A statebus library for responsive variables
 # The MIT License (MIT)
-# Copyright (c) Travis Kriplean, Invisible College
+# Copyright (c) Travis Kriplean, Consider.it LLC
 # 
 #
 # Define & recompute shared variables based upon viewport changes, such as a 
 # resize of a window. 
 
-# To use, add RESPONSIVE() to a component, such as dom.BODY.
+# To use, just include this file. 
 
 # If you want to have more than just window_width and window_height defined, 
 # define a function that calculates the custom responsive variables. 
 # This function takes a single argument, the upstream variables like window 
 # width and height that have already been calculated. For example: 
 
-# RESPONSIVE
-#   calc: (upstream_vars) -> 
+# fickle.register (upstream_vars) -> 
 #     single_col: upstream_vars.window_width < 500
 #     gutter: if upstream_vars.window_width > 1000 then 80 else 10
 
-# Any of your components can register their own RESPONSIVE variables using the 
+# Any of your components can register their own responsive variables using the 
 # same method. 
 
 # All variables are made available on fickle. E.g. fickle.window_width. 
@@ -35,25 +34,19 @@
 # is used to facilitate the direct variable access while subscribing callers 
 # to changes. 
 
+window.fickle = 
+  register: (funk) -> 
+    registered_funks.push funk 
+    new_funks = true 
+    i = setInterval -> 
+      if document.body 
+        be_responsive()
+        clearInterval i 
+    , 1
 
-dom.RESPONSIVE = -> 
-  if !@initialized?
-    registered_funks.push @props.calc 
-    @initialized = true
-    be_responsive()
-
-  SPAN null
-
-dom.RESPONSIVE.down = -> 
-  idx = registered_funks.indexOf(@props.funk)
-  if idx > -1
-    registered_funks.splice idx, 1
-  else 
-    console.error 'Could not clean up FICKLE funk'
-
+    
 be_responsive = -> 
   
-
   # the basic responsive variables
   responsive_vars = 
     window_width: window.innerWidth
@@ -87,7 +80,7 @@ be_responsive = ->
   save(vars) if changed
   vars
 
-window.fickle = {}
+
 registered_funks = []
 prop_defined = {}
 
