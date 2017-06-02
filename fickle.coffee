@@ -1,7 +1,5 @@
 ###########################################################
 # FICKLE: A statebus library for responsive variables
-# The MIT License (MIT)
-# Copyright (c) Travis Kriplean, Consider.it LLC
 # 
 #
 # Define & recompute shared variables based upon viewport changes, such as a 
